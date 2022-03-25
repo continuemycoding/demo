@@ -20,11 +20,12 @@ app.use('/', createProxyMiddleware({
         // delete proxyRes.headers['x-removed']; // remove header from response
 
         console.log("########################################");
-        console.log(proxyRes.read());
-        // console.log("111111111111111");
-        // console.log(req);
-        // console.log("222222222222222");
-        // console.log(res);
+
+        console.log(typeof proxyRes);
+        console.log("111111111111111");
+        console.log(typeof req);
+        console.log("222222222222222");
+        console.log(typeof res);
 
         console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
     }
