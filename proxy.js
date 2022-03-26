@@ -70,10 +70,10 @@ app.use('/', createProxyMiddleware({
                 // if(args[1] == "www.baidu.com")
                 //     return `${req.protocol}://${req.headers.host}`;
 
-                // return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./g, '-')}`;
+                // return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
 
                 const protocol = args[0];
-                const domain = args[1].replace(/-/, ".");
+                const domain = args[1].replace(/-/gm, ".");
                 return protocol + "://" + domain;
             });
 
@@ -99,7 +99,7 @@ app.use('/', createProxyMiddleware({
         const match = /\/proxy\/(http|https)-([\w-]+)(.*)/gm.exec(req.path);
         if (match) {
             //const protocol = match[1];
-            //const domain = match[2].replace(/-/, ".");
+            //const domain = match[2].replace(/-/gm, ".");
             //return protocol + "://" + domain;
 
             return match[3];
@@ -160,7 +160,7 @@ app.use('/', createProxyMiddleware({
                 return;
             }
 
-            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "222222222222222222222");
+            // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", req.url + " => " + req.originalUrl);
 
             const buf = Buffer.concat(chunkArray);
 
@@ -174,23 +174,33 @@ app.use('/', createProxyMiddleware({
 
                 // console.log("decompressed", decompressed);
 
-                // decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
-                // decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
+                // decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/gm, "/avatars-githubusercontent-com");
+                // decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/gm, "/github-githubassets-com");
 
-                // decompressed = decompressed.replace(/https:\/\/www\.google\.com\.hk/g, `http://${req.headers.host}`);
+                // decompressed = decompressed.replace(/https:\/\/www\.google\.com\.hk/gm, `http://${req.headers.host}`);
 
                 // http://hongkong:12345/https-www-youtube-com/
 
 
+                // const proxyUrl = /\/proxy\/(http|https)-[\w-]+/gm.exec(req.originalUrl);
+                // console.log("originalUrl", req.originalUrl, proxyUrl);
+
+                // if(proxyUrl == null)
+                  const  proxyUrl = "/proxy/https-nextjs-org";
 
                 decompressed = decompressed.replace(/(http|https):\/\/(([\w\.]+)(:\d+)?)/gm, (substring, ...args) => {
-                    // if(args[1] == "www.baidu.com")
-                    //     return `${req.protocol}://${req.headers.host}`;
+                    // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
-                    // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./g, '-')}`);
-
-                    return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./g, '-')}`;
+                    return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
                 });
+
+                decompressed = decompressed.replace(/(src|href)="(\/[\w\/\-\.]+)"/gm, (substring, ...args) => {
+                    console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl}${args[1]}"`);
+
+                    return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl}${args[1]}"`;
+                });
+
+                // 
 
                 // decompressed = decompressed.replace(/www.baidu.com/gm, `${req.protocol}://${req.headers.host}`);
 
@@ -200,7 +210,7 @@ app.use('/', createProxyMiddleware({
                 else if(encoding == "br")
                     compressed = brotli.compress(new TextEncoder().encode(decompressed));
 
-                console.log("compressed", compressed);
+                // console.log("compressed", compressed);
 
                 _end.call(res, compressed);
             }
