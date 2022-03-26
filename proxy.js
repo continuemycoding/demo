@@ -51,10 +51,10 @@ app.use('/', createProxyMiddleware({
     // target: 'https://www.google.com.hk/',
     router: function (req) {
 
-        if (req.protocol == "http")
-            return 'https://www.google.com.hk/';
+        // if (req.protocol == "http")
+            // return 'https://www.google.com.hk/';
 
-        console.log("#####################", "router", req.url, "protocol", req.protocol, "hostname", req.hostname);
+        console.log("#####################", "router", req.baseUrl, "protocol", req.protocol, "hostname", req.hostname);
         return 'https://www.google.com.hk/';
     },
     // target: "http://ip-api.com/json/?lang=zh-CN",
