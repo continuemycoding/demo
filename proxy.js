@@ -52,7 +52,7 @@ app.use('/', createProxyMiddleware({
     router: function (req) {
 
         if (req.protocol == "http")
-            return;
+            return 'https://www.google.com.hk/';
 
         console.log("#####################", "router", req.url, "protocol", req.protocol, "hostname", req.hostname);
         return 'https://www.google.com.hk/';
@@ -104,7 +104,7 @@ app.use('/', createProxyMiddleware({
                 decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
                 decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
 
-                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www.youtube.com://${req.hostname}/`);
+                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www.youtube.com://${req.headers.host}`);
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
