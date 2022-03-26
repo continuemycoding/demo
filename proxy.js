@@ -31,6 +31,16 @@ app.use('/github-githubassets-com/', createProxyMiddleware({
     }
 }));
 
+app.use('/www-youtube-com/', createProxyMiddleware({
+    logLevel: "debug",
+    target: 'https://www.youtube.com/',
+    changeOrigin: true,
+    pathRewrite: { '^/www-youtube-com/': '/' },
+    onProxyRes: (proxyRes, req, res) => {
+        console.log('https://www.youtube.com/', "onProxyRes");
+    }
+}));
+
 app.use('/', createProxyMiddleware({
     logLevel: "debug",
     // target: 'https://web.telegram.org/',
@@ -82,6 +92,8 @@ app.use('/', createProxyMiddleware({
 
                 decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
                 decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
+
+                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, "/www-youtube-com");
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
