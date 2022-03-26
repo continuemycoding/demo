@@ -54,7 +54,7 @@ app.use('/', createProxyMiddleware({
         // if (req.protocol == "http")
             // return 'https://www.google.com.hk/';
 
-        console.log("#####################", "router", req.baseUrl, "protocol", req.protocol, "hostname", req.hostname);
+        console.log(new Date().toLocaleString(), "#####################", "router", req.baseUrl, "protocol", req.protocol, "hostname", req.hostname);
         return 'https://www.google.com.hk/';
     },
     // target: "http://ip-api.com/json/?lang=zh-CN",
