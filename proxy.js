@@ -105,7 +105,8 @@ app.use('/', createProxyMiddleware({
                 decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
 
                 decompressed = decompressed.replace(/https:\/\/www\.google\.com\.hk/g, `http://${req.headers.host}`);
-                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www-youtube-com://${req.headers.host}`);
+                // decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www-youtube-com://${req.headers.host}`);
+                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `youtube://${req.headers.host}`);
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
