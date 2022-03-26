@@ -109,7 +109,7 @@ app.use('/', createProxyMiddleware({
     
                 // decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `${req.protocol}://${req.headers.host}/www-youtube-com`);
 
-                decompressed = decompressed.replace(/(http|https):\/\/([\w+\.]+)/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/(http|https):\/\/(([\w\.]+)(:\d+)?)/gm, (substring, ...args) => {
                     return `${req.protocol}://${req.headers.host}/${args[0]}-${args[1].replace(/\./g, '-')}`;
                 });
 
