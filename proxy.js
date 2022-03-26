@@ -45,7 +45,7 @@ app.use('/github-githubassets-com/', createProxyMiddleware({
 // }));
 
 app.use('/', createProxyMiddleware({
-    logLevel: "debug",
+    // logLevel: "debug",
     // target: 'https://web.telegram.org/',
     // target: 'https://github.com/',
     // target: 'https://www.google.com.hk/',
