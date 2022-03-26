@@ -49,7 +49,11 @@ app.use('/', createProxyMiddleware({
     // target: 'https://web.telegram.org/',
     // target: 'https://github.com/',
     // target: 'https://www.google.com.hk/',
-    router: function(req) {
+    router: function (req) {
+
+        if (req.protocol == "http")
+            return;
+
         console.log("#####################", "router", req.url, "protocol", req.protocol, "hostname", req.hostname);
         return 'https://www.google.com.hk/';
     },
