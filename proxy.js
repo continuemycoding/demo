@@ -1,6 +1,5 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-// const iconv = require("iconv-lite");
 const { gzip, ungzip } = require('node-gzip');
 
 const app = express();
@@ -32,13 +31,13 @@ app.use('/github-githubassets-com/', createProxyMiddleware({
     }
 }));
 
-app.use('/github-com', createProxyMiddleware({
+app.use('/', createProxyMiddleware({
     logLevel: "debug",
     // target: 'https://web.telegram.org/',
     target: 'https://github.com/',
     // target: "http://ip-api.com/json/?lang=zh-CN",
     changeOrigin: true,
-    pathRewrite: { '^/github-com/': '/' },
+    // pathRewrite: { '^/github-com/': '/' },
     // onOpen: (proxyRes) => {
     //     console.log("onOpen", proxyRes.remoteAddress);
     //     proxySocket.on('data', (data, data2) => {
@@ -56,42 +55,19 @@ app.use('/github-com', createProxyMiddleware({
         if (type.indexOf("text/html") == -1)
             return;
 
-        // console.log(proxyRes.headers);
-
         const chunkArray = [];
 
         proxyRes.on('data', function (chunk) {
             chunkArray.push(chunk);
         });
 
-        // const _write = res.write;
-        // res.write = function (data) {
-        //     try {
-        //         console.log(data);
-        //         // console.log(data.toString("utf-8").indexOf("github.githubassets.com"));
-        //         // var jsonData = JSON.parse(data);
-        //         // // here we can modify jsonData
-        //         // jsonData.country = "中国福州市";
-        //         // console.log("##########", jsonData);
-        //         // var buf = Buffer.from(JSON.stringify(jsonData), 'utf-8');
-
-        //         _write.call(res, data);
-        //     } catch (err) {
-        //         console.log(err);
-        //     }
-        // };
-
-        // return;
-
-        // Defer all writes
         res.write = () => { };
 
         const _end = res.end;
-        res.end = function (chunk) {
+        res.end = async function (chunk) {
             console.log('https://github.com/', "end", chunkArray.length, chunk);
-            // console.log(body.toString());
-            chunk && chunkArray.push(chunk);
 
+            chunk && chunkArray.push(chunk);
 
             if (chunkArray.length == 0) {
                 _end.call(res);
@@ -99,38 +75,23 @@ app.use('/github-com', createProxyMiddleware({
             }
 
             const buf = Buffer.concat(chunkArray);
-            // console.log(buf.toString());
-            // console.log(iconv.decode(buf, "gbk"));
 
-            // console.log(buf.toString());
+            try {
+                let decompressed = (await ungzip(buf)).toString();
 
-            ungzip(buf)
-                // .then((compressed) => {
-                //     return ungzip(compressed);
-                // })
-                .then((decompressed) => {
-                    let output = decompressed.toString();
+                decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
+                decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
 
-                    output = output.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
-                    output = output.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
+                const compressed = await gzip(decompressed);
+                _end.call(res, compressed);
+            }
+            catch (e) {
+                console.error(e);
 
-                    gzip(output).then((compressed) => {
-                        // return ungzip(compressed);
-                        _end.call(res, compressed);
-                    });
-                });
-
-
+                _end.call(res, buf);
+            }
         };
     }
 }));
-
-
-app.use('/', createProxyMiddleware({
-    logLevel: "debug",
-    target: 'https://github.com/',
-    changeOrigin: true
-}));
-
 
 app.listen(12345);
