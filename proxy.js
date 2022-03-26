@@ -2,6 +2,9 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { gzip, ungzip } = require('node-gzip');
 
+// http://service.picasso.adesk.com/v1/vertical/category/4e4d610cdf714d2966000000/vertical
+// http://maqib.cn/blog/node-reptile
+
 const app = express();
 
 // app.use('/github/', createProxyMiddleware({
@@ -45,7 +48,11 @@ app.use('/', createProxyMiddleware({
     logLevel: "debug",
     // target: 'https://web.telegram.org/',
     // target: 'https://github.com/',
-    target: 'https://www.google.com.hk/',
+    // target: 'https://www.google.com.hk/',
+    router: function(req) {
+        console.log("#####################", "router", req.url);
+        return 'https://www.google.com.hk/';
+    },
     // target: "http://ip-api.com/json/?lang=zh-CN",
     changeOrigin: true,
     // pathRewrite: { '^/github-com/': '/' },
@@ -60,7 +67,7 @@ app.use('/', createProxyMiddleware({
 
 
         console.log('https://github.com/', "onProxyRes", type, req.url);
-        console.log(proxyRes.headers["content-security-policy"]);
+        // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
 
         if (type.indexOf("text/html") == -1)
@@ -76,7 +83,7 @@ app.use('/', createProxyMiddleware({
 
         const _end = res.end;
         res.end = async function (chunk) {
-            console.log('https://github.com/', "end", chunkArray.length, chunk);
+            console.log('https://github.com/', "end", chunkArray.length);
 
             chunk && chunkArray.push(chunk);
 
