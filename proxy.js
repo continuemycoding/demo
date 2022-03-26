@@ -34,7 +34,8 @@ app.use('/github-githubassets-com/', createProxyMiddleware({
 app.use('/', createProxyMiddleware({
     logLevel: "debug",
     // target: 'https://web.telegram.org/',
-    target: 'https://github.com/',
+    // target: 'https://github.com/',
+    target: 'https://www.google.com.hk/',
     // target: "http://ip-api.com/json/?lang=zh-CN",
     changeOrigin: true,
     // pathRewrite: { '^/github-com/': '/' },
