@@ -34,15 +34,15 @@ app.use('/github-githubassets-com/', createProxyMiddleware({
     }
 }));
 
-app.use('/www-youtube-com/', createProxyMiddleware({
-    logLevel: "debug",
-    target: 'https://www.youtube.com/',
-    changeOrigin: true,
-    pathRewrite: { '^/www-youtube-com/': '/' },
-    onProxyRes: (proxyRes, req, res) => {
-        console.log('https://www.youtube.com/', "onProxyRes");
-    }
-}));
+// app.use('/www-youtube-com/', createProxyMiddleware({
+//     logLevel: "debug",
+//     target: 'https://www.youtube.com/',
+//     changeOrigin: true,
+//     pathRewrite: { '^/www-youtube-com/': '/' },
+//     onProxyRes: (proxyRes, req, res) => {
+//         console.log('https://www.youtube.com/', "onProxyRes");
+//     }
+// }));
 
 app.use('/', createProxyMiddleware({
     logLevel: "debug",
@@ -50,7 +50,7 @@ app.use('/', createProxyMiddleware({
     // target: 'https://github.com/',
     // target: 'https://www.google.com.hk/',
     router: function(req) {
-        console.log("#####################", "router", req.url);
+        console.log("#####################", "router", req.url, "protocol", req.protocol, "hostname", req.hostname);
         return 'https://www.google.com.hk/';
     },
     // target: "http://ip-api.com/json/?lang=zh-CN",
@@ -97,10 +97,10 @@ app.use('/', createProxyMiddleware({
             try {
                 let decompressed = (await ungzip(buf)).toString();
 
-                decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
-                decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
+                decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com\//g, "/avatars-githubusercontent-com/");
+                decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com\//g, "/github-githubassets-com/");
 
-                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, "/www-youtube-com");
+                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com\//g, "proxy://www.youtube.com/");
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
