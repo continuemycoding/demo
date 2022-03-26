@@ -16,14 +16,20 @@ app.use('/avatars-githubusercontent-com/', createProxyMiddleware({
     logLevel: "debug",
     target: 'https://avatars.githubusercontent.com/',
     changeOrigin: true,
-    pathRewrite: { '^/avatars-githubusercontent-com/': '/' }
+    pathRewrite: { '^/avatars-githubusercontent-com/': '/' },
+    onProxyRes: (proxyRes, req, res) => {
+        console.log('https://avatars.githubusercontent.com/', "onProxyRes");
+    }
 }));
 
 app.use('/github-githubassets-com/', createProxyMiddleware({
     logLevel: "debug",
     target: 'https://github.githubassets.com/',
     changeOrigin: true,
-    pathRewrite: { '^/github-githubassets-com/': '/' }
+    pathRewrite: { '^/github-githubassets-com/': '/' },
+    onProxyRes: (proxyRes, req, res) => {
+        console.log('https://github.githubassets.com/', "onProxyRes");
+    }
 }));
 
 app.use('/github-com', createProxyMiddleware({
@@ -41,24 +47,21 @@ app.use('/github-com', createProxyMiddleware({
     // },
     onProxyRes: (proxyRes, req, res) => {
         const type = proxyRes.headers["content-type"];
-        
 
-        console.log("onProxyRes", type, proxyRes.headers);
 
-        if(type.indexOf("text/html") == -1)
+        console.log('https://github.com/', "onProxyRes", type, req.url);
+        console.log(proxyRes.headers["content-security-policy"]);
+        delete proxyRes.headers["content-security-policy"];
+
+        if (type.indexOf("text/html") == -1)
             return;
 
         // console.log(proxyRes.headers);
 
-        var body = "";
-        let chunkArray = [];
+        const chunkArray = [];
 
         proxyRes.on('data', function (chunk) {
-            // console.log(chunk);
-            // body += chunk;
-
             chunkArray.push(chunk);
-            // console.log("####################", body.toString());
         });
 
         // const _write = res.write;
@@ -84,15 +87,23 @@ app.use('/github-com', createProxyMiddleware({
         res.write = () => { };
 
         const _end = res.end;
-        res.end = function () {
-            console.log("end", arguments);
+        res.end = function (chunk) {
+            console.log('https://github.com/', "end", chunkArray.length, chunk);
             // console.log(body.toString());
+            chunk && chunkArray.push(chunk);
+
+
+            if (chunkArray.length == 0) {
+                _end.call(res);
+                return;
+            }
+
             const buf = Buffer.concat(chunkArray);
             // console.log(buf.toString());
             // console.log(iconv.decode(buf, "gbk"));
 
             // console.log(buf.toString());
-            
+
             ungzip(buf)
                 // .then((compressed) => {
                 //     return ungzip(compressed);
@@ -109,7 +120,7 @@ app.use('/github-com', createProxyMiddleware({
                     });
                 });
 
-            
+
         };
     }
 }));
