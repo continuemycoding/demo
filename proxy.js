@@ -1,5 +1,7 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+// const iconv = require("iconv-lite");
+const { gzip, ungzip } = require('node-gzip');
 
 const app = express();
 
@@ -10,66 +12,114 @@ const app = express();
 //     pathRewrite: { '^/github/': '/' }
 // }));
 
-app.use('/', createProxyMiddleware({
+app.use('/avatars-githubusercontent-com/', createProxyMiddleware({
+    logLevel: "debug",
+    target: 'https://avatars.githubusercontent.com/',
+    changeOrigin: true,
+    pathRewrite: { '^/avatars-githubusercontent-com/': '/' }
+}));
+
+app.use('/github-githubassets-com/', createProxyMiddleware({
+    logLevel: "debug",
+    target: 'https://github.githubassets.com/',
+    changeOrigin: true,
+    pathRewrite: { '^/github-githubassets-com/': '/' }
+}));
+
+app.use('/github-com', createProxyMiddleware({
     logLevel: "debug",
     // target: 'https://web.telegram.org/',
-    // target: 'https://github.com/',
-    target: "http://ip-api.com/json/?lang=zh-CN",
+    target: 'https://github.com/',
+    // target: "http://ip-api.com/json/?lang=zh-CN",
     changeOrigin: true,
-    onOpen: (proxyRes) => {
-        console.log("onOpen", proxyRes.remoteAddress);
-        proxySocket.on('data', (data, data2) => {
-            console.log(data);
-        });
-    },
+    pathRewrite: { '^/github-com/': '/' },
+    // onOpen: (proxyRes) => {
+    //     console.log("onOpen", proxyRes.remoteAddress);
+    //     proxySocket.on('data', (data, data2) => {
+    //         console.log(data);
+    //     });
+    // },
     onProxyRes: (proxyRes, req, res) => {
-        console.log("onProxyRes");
-        // proxyRes.headers['x-added'] = 'foobar'; // add new header to response
-        // delete proxyRes.headers['x-removed']; // remove header from response
+        const type = proxyRes.headers["content-type"];
+        
 
-        // console.log("########################################");
+        console.log("onProxyRes", type, proxyRes.headers);
 
-        // console.log(proxyRes.constructor.name);
-        // console.log("111111111111111");
-        // console.log(req.constructor.name);
-        // console.log("222222222222222");
-        // console.log(res.app);
+        if(type.indexOf("text/html") == -1)
+            return;
 
-        // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-
-
-
-
-        console.log(proxyRes.headers);
-        // console.log(res.getHeaders());
-
+        // console.log(proxyRes.headers);
 
         var body = "";
-        var _write = res.write;
-        proxyRes.on('data', function (chunk) {
-            body += chunk;
+        let chunkArray = [];
 
-            console.log("####################", body.toString());
+        proxyRes.on('data', function (chunk) {
+            // console.log(chunk);
+            // body += chunk;
+
+            chunkArray.push(chunk);
+            // console.log("####################", body.toString());
         });
 
-        res.write = function (data) {
-            try {
-                // console.log(data.toString("utf-8"));
-                // console.log(data.toString("utf-8").indexOf("github.githubassets.com"));
-                var jsonData = JSON.parse(data);
-                // here we can modify jsonData
-                jsonData.country = "中国福州市";
-                console.log("##########", jsonData);
-                var buf = Buffer.from(JSON.stringify(jsonData), 'utf-8');
+        // const _write = res.write;
+        // res.write = function (data) {
+        //     try {
+        //         console.log(data);
+        //         // console.log(data.toString("utf-8").indexOf("github.githubassets.com"));
+        //         // var jsonData = JSON.parse(data);
+        //         // // here we can modify jsonData
+        //         // jsonData.country = "中国福州市";
+        //         // console.log("##########", jsonData);
+        //         // var buf = Buffer.from(JSON.stringify(jsonData), 'utf-8');
 
-                _write.call(res, buf);
-            } catch (err) {
-                console.log(err);
-            }
-        }
+        //         _write.call(res, data);
+        //     } catch (err) {
+        //         console.log(err);
+        //     }
+        // };
+
+        // return;
+
+        // Defer all writes
+        res.write = () => { };
+
+        const _end = res.end;
+        res.end = function () {
+            console.log("end", arguments);
+            // console.log(body.toString());
+            const buf = Buffer.concat(chunkArray);
+            // console.log(buf.toString());
+            // console.log(iconv.decode(buf, "gbk"));
+
+            // console.log(buf.toString());
+            
+            ungzip(buf)
+                // .then((compressed) => {
+                //     return ungzip(compressed);
+                // })
+                .then((decompressed) => {
+                    let output = decompressed.toString();
+
+                    output = output.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
+                    output = output.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
+
+                    gzip(output).then((compressed) => {
+                        // return ungzip(compressed);
+                        _end.call(res, compressed);
+                    });
+                });
+
+            
+        };
     }
 }));
 
+
+app.use('/', createProxyMiddleware({
+    logLevel: "debug",
+    target: 'https://github.com/',
+    changeOrigin: true
+}));
 
 
 app.listen(12345);
