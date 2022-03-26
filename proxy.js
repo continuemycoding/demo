@@ -106,13 +106,12 @@ app.use('/', createProxyMiddleware({
 
                 decompressed = decompressed.replace(/https:\/\/www\.google\.com\.hk/g, `http://${req.headers.host}`);
                 // decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www-youtube-com://${req.headers.host}`);
-                console.log({
-                    path: req.path,
-                    originalUrl: req.originalUrl,
-                    url: req.url,
-                    baseUrl: req.baseUrl
-                })
-                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `${req.protocol}://${req.headers.host}/www-youtube-com`);
+    
+                // decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `${req.protocol}://${req.headers.host}/www-youtube-com`);
+
+                decompressed = decompressed.replace(/(http|https):\/\/([\w+\.]+)/gm, (substring, ...args) => {
+                    return `${req.protocol}://${req.headers.host}/${args[0]-args[1].replace(/\./g, '-')}`;
+                });
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
