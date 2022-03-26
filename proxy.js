@@ -49,17 +49,42 @@ app.use('/', createProxyMiddleware({
     // target: 'https://web.telegram.org/',
     // target: 'https://github.com/',
     // target: 'https://www.google.com.hk/',
+    //target: "https://www.baidu.com",
     router: function (req) {
 
         // if (req.protocol == "http")
-            // return 'https://www.google.com.hk/';
+        // return 'https://www.google.com.hk/';
 
         console.log(new Date().toLocaleString(), "#####################", "router", req.path, "protocol", req.protocol, "hostname", req.hostname);
-        return 'https://www.google.com.hk/';
+        // return 'https://www.google.com.hk/';
+
+        const match = /\/(http|https)-([\w-]+)/g.exec(req.path);
+        if (match) {
+            const protocol = match[1];
+            const domain = match[2].replace(/-/, ".");
+            //return protocol + "://" + domain;
+            const result = {};
+            result[match[0]] = protocol + "://" + domain;
+            return result;
+        }
+
+        return "https://www.baidu.com";
     },
     // target: "http://ip-api.com/json/?lang=zh-CN",
     changeOrigin: true,
     // pathRewrite: { '^/github-com/': '/' },
+    pathRewrite: async function (path, req) {
+        const match = /\/(http|https)-([\w-]+)(.*)/gm.exec(req.path);
+        if (match) {
+            //const protocol = match[1];
+            //const domain = match[2].replace(/-/, ".");
+            //return protocol + "://" + domain;
+
+            return match[3];
+        }
+
+        return path;
+    },
     // onOpen: (proxyRes) => {
     //     console.log("onOpen", proxyRes.remoteAddress);
     //     proxySocket.on('data', (data, data2) => {
@@ -101,17 +126,23 @@ app.use('/', createProxyMiddleware({
             try {
                 let decompressed = (await ungzip(buf)).toString();
 
-                decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
-                decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
+                // decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
+                // decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
 
-                decompressed = decompressed.replace(/https:\/\/www\.google\.com\.hk/g, `http://${req.headers.host}`);
-                // decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www-youtube-com://${req.headers.host}`);
-    
-                // decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `${req.protocol}://${req.headers.host}/www-youtube-com`);
+                // decompressed = decompressed.replace(/https:\/\/www\.google\.com\.hk/g, `http://${req.headers.host}`);
+
+                // http://hongkong:12345/https-www-youtube-com/
+
+
 
                 decompressed = decompressed.replace(/(http|https):\/\/(([\w\.]+)(:\d+)?)/gm, (substring, ...args) => {
-                    return `${req.protocol}://${req.headers.host}/${args[0]}-${args[1].replace(/\./g, '-')}`;
+                    // if(args[1] == "www.baidu.com")
+                    //     return `${req.protocol}://${req.headers.host}`;
+
+                    return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./g, '-')}`;
                 });
+
+                // decompressed = decompressed.replace(/www.baidu.com/gm, `${req.protocol}://${req.headers.host}`);
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
