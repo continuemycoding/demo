@@ -66,7 +66,7 @@ app.use('/', createProxyMiddleware({
         const type = proxyRes.headers["content-type"];
 
 
-        console.log('https://github.com/', "onProxyRes", type, req.url);
+        // console.log('https://github.com/', "onProxyRes", type, req.url);
         // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
 
@@ -83,7 +83,7 @@ app.use('/', createProxyMiddleware({
 
         const _end = res.end;
         res.end = async function (chunk) {
-            console.log('https://github.com/', "end", chunkArray.length);
+            // console.log('https://github.com/', "end", chunkArray.length);
 
             chunk && chunkArray.push(chunk);
 
@@ -97,10 +97,10 @@ app.use('/', createProxyMiddleware({
             try {
                 let decompressed = (await ungzip(buf)).toString();
 
-                decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com\//g, "/avatars-githubusercontent-com/");
-                decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com\//g, "/github-githubassets-com/");
+                decompressed = decompressed.replace(/https:\/\/avatars\.githubusercontent\.com/g, "/avatars-githubusercontent-com");
+                decompressed = decompressed.replace(/https:\/\/github\.githubassets\.com/g, "/github-githubassets-com");
 
-                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com\//g, "proxy://www.youtube.com/");
+                decompressed = decompressed.replace(/https:\/\/www\.youtube\.com/g, `www.youtube.com://${req.hostname}/`);
 
                 const compressed = await gzip(decompressed);
                 _end.call(res, compressed);
