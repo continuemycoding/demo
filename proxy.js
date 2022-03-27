@@ -11,9 +11,6 @@ const app = express();
 app.use('/', createProxyMiddleware({
     // logLevel: "debug",
     router: (req) => {
-        if (typeof req == "string")
-            return req;
-
         return req.protocol + "://" + req.headers.host;
     },
     changeOrigin: true,
