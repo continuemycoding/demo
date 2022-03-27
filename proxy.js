@@ -99,7 +99,7 @@ app.use('/', createProxyMiddleware({
     changeOrigin: true,
     // pathRewrite: { '^/github-com/': '/' },
     pathRewrite: async function (path, req) {
-        const match = /\/proxy\/(http|https)-([\w-]+)(.*)/gm.exec(req.path);
+        const match = /\/proxy\/(http|https)-([\w-=]+)(.*)/gm.exec(req.path);
         if (match) {
             //const protocol = match[1];
             //const domain = match[2].replace(/-/gm, ".");
