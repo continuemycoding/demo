@@ -126,7 +126,7 @@ app.use('/', createProxyMiddleware({
 
         console.log("onProxyRes", req.path);
 
-        if (proxyRes.headers["content-type"].indexOf("text/html") == -1)
+        if (proxyRes.headers["content-type"]?.indexOf("text/html") == -1)
             return;
 
         // const type = proxyRes.headers["content-type"];
