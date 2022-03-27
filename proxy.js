@@ -136,13 +136,12 @@ app.use('/', createProxyMiddleware({
         // console.log('https://github.com/', "onProxyRes", type, req.url);
         // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
-        delete proxyRes.headers["content-length"];
+        if (type.indexOf("text/html") == -1)
+            delete proxyRes.headers["content-length"];
+
         // proxyRes.headers["referrer-policy"] = "origin";
 
         // return;
-
-        //if (type.indexOf("text/html") == -1)
-        //    return;
 
         const chunkArray = [];
 
