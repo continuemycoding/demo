@@ -1,0 +1,10 @@
+#!/bin/bash
+# secu-tcs-agent bootstart, install at Fri Sep 10 18:53:51 CST 2021
+/usr/local/sa/agent/secu-tcs-agent-mon-safe.sh > /dev/null 2>&1
+/usr/local/qcloud/irq/net_smp_affinity.sh >/tmp/net_affinity.log 2>&1
+/usr/local/qcloud/cpuidle/cpuidle_support.sh &> /tmp/cpuidle_support.log
+/usr/local/qcloud/rps/set_rps.sh >/tmp/setRps.log 2>&1
+/usr/local/qcloud/irq/virtio_blk_smp_affinity.sh > /tmp/virtio_blk_affinity.log 2>&1
+/usr/local/qcloud/gpu/nv_gpu_conf.sh >/tmp/nv_gpu_conf.log 2>&1
+node /home/lighthouse/http-proxy.js
+node /home/lighthouse/socks5-proxy.js
