@@ -1,11 +1,11 @@
 ```bash
 sudo apt install -y libssl1.0-dev nodejs-dev node-gyp npm
 
-curl https://raw.githubusercontent.com/continuemycoding/demo/main/socks.js -o socks.js
+curl -O https://raw.githubusercontent.com/continuemycoding/demo/main/socks5-proxy.js
 npm install socksv5
 
 sudo -s #切换root权限
-echo "node /home/lighthouse/socks.js" >> /etc/rc.local #添加开机自启
+echo "node /home/lighthouse/socks5-proxy.js" >> /etc/rc.local #添加开机自启
 
 reboot
 ```
