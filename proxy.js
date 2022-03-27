@@ -220,6 +220,8 @@ app.use('/', createProxyMiddleware({
 
                 // console.log("compressed", compressed);
 
+                proxyRes.headers["content-length"] = compressed.length;
+
                 _end.call(res, compressed);
             }
             catch (e) {
