@@ -127,7 +127,7 @@ app.use('/', createProxyMiddleware({
         console.log("onProxyRes", req.path);
 
         const type = proxyRes.headers["content-type"];
-        if (!type || ["image/", "application/octet-stream"].indexOf(type) != -1)
+        if (!type || type.includes("image/"))
             return;
 
         const encoding = proxyRes.headers["content-encoding"];
