@@ -128,7 +128,7 @@ app.use('/', createProxyMiddleware({
 
         const contentType = proxyRes.headers["content-type"];
 
-        if (contentType?.indexOf("text/html") == -1)
+        if (contentType && contentType.indexOf("text/html") == -1)
             return;
 
         // if (contentType?.includes("image/"))
