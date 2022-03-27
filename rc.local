@@ -6,5 +6,4 @@
 /usr/local/qcloud/rps/set_rps.sh >/tmp/setRps.log 2>&1
 /usr/local/qcloud/irq/virtio_blk_smp_affinity.sh > /tmp/virtio_blk_affinity.log 2>&1
 /usr/local/qcloud/gpu/nv_gpu_conf.sh >/tmp/nv_gpu_conf.log 2>&1
-/home/lighthouse/http-proxy.sh
-/home/lighthouse/socks5-proxy.sh
+node /home/lighthouse/proxy.js
