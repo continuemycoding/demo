@@ -192,20 +192,20 @@ app.use('/', createProxyMiddleware({
                 // if(proxyUrl == null)
                 //   const  proxyUrl = "/proxy/https-nextjs-org";
 
-                decompressed = decompressed.replace(/(http|https):\/\/(([\w.-]+)(:\d+)?)/gm, (substring, ...args) => {
-                    // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
+                // decompressed = decompressed.replace(/(http|https):\/\/(([\w.-]+)(:\d+)?)/gm, (substring, ...args) => {
+                //     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
-                    return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${Buffer.from(args[1]).toString('hex')}`;
-                });
+                //     return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${Buffer.from(args[1]).toString('hex')}`;
+                // });
 
-                const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
-                if (proxyUrl) {
-                    decompressed = decompressed.replace(/(src|href)="(\/[^"]+)"/gm, (substring, ...args) => {
-                        // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
+                // const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
+                // if (proxyUrl) {
+                //     decompressed = decompressed.replace(/(src|href)="(\/[^"]+)"/gm, (substring, ...args) => {
+                //         // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
 
-                        return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`;
-                    });
-                }
+                //         return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`;
+                //     });
+                // }
 
 
                 // 
