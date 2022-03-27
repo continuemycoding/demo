@@ -30,9 +30,9 @@ function router(req) {
         return xx;
     }
 
-    // return "https://www.xvideos.com/";
+    return "https://www.xvideos.com/";
     // return "https://my-next-app-git-test-continuemycoding.vercel.app/";
-    return "https://www.bilibili.com/";
+    // return "https://www.bilibili.com/";
     // return "https://www.google.com.hk/";
     // return "https://web.telegram.org/";
     // return "https://github.com/";
