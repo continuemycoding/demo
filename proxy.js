@@ -8,128 +8,57 @@ const brotli = require('brotli');
 
 const app = express();
 
-// app.use('/github/', createProxyMiddleware({
-//     logLevel: "debug",
-//     target: 'https://github.com/',
-//     changeOrigin: true,
-//     pathRewrite: { '^/github/': '/' }
-// }));
+function router(req) {
+    const searchValue = /\/proxy\/(http|https)-([\w-=]+)/gm;
 
-// app.use('/avatars-githubusercontent-com/', createProxyMiddleware({
-//     logLevel: "debug",
-//     target: 'https://avatars.githubusercontent.com/',
-//     changeOrigin: true,
-//     pathRewrite: { '^/avatars-githubusercontent-com/': '/' },
-//     onProxyRes: (proxyRes, req, res) => {
-//         console.log('https://avatars.githubusercontent.com/', "onProxyRes");
-//     }
-// }));
+    const match = searchValue.exec(req.path);
+    if (match) {
 
-// app.use('/github-githubassets-com/', createProxyMiddleware({
-//     logLevel: "debug",
-//     target: 'https://github.githubassets.com/',
-//     changeOrigin: true,
-//     pathRewrite: { '^/github-githubassets-com/': '/' },
-//     onProxyRes: (proxyRes, req, res) => {
-//         console.log('https://github.githubassets.com/', "onProxyRes");
-//     }
-// }));
+        const xx = match[0].replace(searchValue, (substring, ...args) => {
+            // if(args[1] == "www.baidu.com")
+            //     return `${req.protocol}://${req.headers.host}`;
 
-// app.use('/www-youtube-com/', createProxyMiddleware({
-//     logLevel: "debug",
-//     target: 'https://www.youtube.com/',
-//     changeOrigin: true,
-//     pathRewrite: { '^/www-youtube-com/': '/' },
-//     onProxyRes: (proxyRes, req, res) => {
-//         console.log('https://www.youtube.com/', "onProxyRes");
-//     }
-// }));
+            // return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
+
+            const protocol = args[0];
+            const domain = Buffer.from(args[1], 'hex').toString();
+            return protocol + "://" + domain;
+        });
+
+        console.log("####################", "router", xx);
+
+        return xx;
+    }
+
+    // return "https://www.xvideos.com/";
+    // return "https://my-next-app-git-test-continuemycoding.vercel.app/";
+    return "https://www.bilibili.com/";
+    // return "https://www.google.com.hk/";
+    // return "https://web.telegram.org/";
+    // return "https://github.com/";
+    // return "https://www.baidu.com";
+}
 
 app.use('/', createProxyMiddleware({
     // logLevel: "debug",
-    // target: 'https://web.telegram.org/',
-    // target: 'https://github.com/',
-    // target: 'https://www.google.com.hk/',
-    //target: "https://www.baidu.com",
-    router: function (req) {
-
-        // console.log("router", req.path);
-
-        // if (req.protocol == "http")
-        // return 'https://www.google.com.hk/';
-
-
-        // return 'https://www.google.com.hk/';
-
-        // /proxy/https-www-bilibili-com/gentleman/polyfill.js
-
-        const searchValue = /\/proxy\/(http|https)-([\w-=]+)/gm;
-
-        const match = searchValue.exec(req.path);
-        if (match) {
-
-            const xx = match[0].replace(searchValue, (substring, ...args) => {
-                // if(args[1] == "www.baidu.com")
-                //     return `${req.protocol}://${req.headers.host}`;
-
-                // return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
-
-                const protocol = args[0];
-                const domain = Buffer.from(args[1], 'hex').toString();
-                return protocol + "://" + domain;
-            });
-
-            console.log("####################", "router", xx);
-
-            return xx;
-
-            // const protocol = match[1];
-            // const domain = match[2].replace(/-/, ".");
-            // return protocol + "://" + domain;
-            //const result = {};
-            //result[match[0]] = protocol + "://" + domain;
-            //return result;
-        }
-
-        // return "https://www.xvideos.com/";
-        // return "https://my-next-app-git-test-continuemycoding.vercel.app/";
-        return "https://www.bilibili.com/";
-    },
-    // target: "http://ip-api.com/json/?lang=zh-CN",
+    router,
     changeOrigin: true,
-    // pathRewrite: { '^/github-com/': '/' },
     pathRewrite: async function (path, req) {
         const match = /\/proxy\/(http|https)-([\w-=]+)(.*)/gm.exec(req.path);
-        if (match) {
-            //const protocol = match[1];
-            //const domain = match[2].replace(/-/gm, ".");
-            //return protocol + "://" + domain;
-
-            return match[3];
-        }
-
-        return path;
+        return match ? match[3] : path;
     },
-    // onOpen: (proxyRes) => {
-    //     console.log("onOpen", proxyRes.remoteAddress);
-    //     proxySocket.on('data', (data, data2) => {
-    //         console.log(data);
-    //     });
-    // },
-    // onProxyReq: (proxyReq, req, res, options) => {
-    //     // req.headers["cache-control"] = "no-cache";
-    //     // req.headers["cache-control"] = "no-store";
-    //     req.headers["content-encoding"] = "gzip";
-    //     req.gzip = true;
-    // },
+    onProxyReq: (proxyReq, req, res, options) => {
+        proxyReq.setHeader('referer', router(req.originalUrl));
+    },
     onProxyRes: (proxyRes, req, res) => {
 
         console.log("onProxyRes", req.path);
 
         const contentType = proxyRes.headers["content-type"];
 
-        if (contentType && contentType.indexOf("text/html") == -1)
+        if (contentType && contentType.indexOf("text/html") == -1) {
             return;
+        }
 
         // if (contentType?.includes("image/"))
         //     return;
@@ -137,14 +66,8 @@ app.use('/', createProxyMiddleware({
         const encoding = proxyRes.headers["content-encoding"];
         console.log({ encoding });
 
-        // console.log('https://github.com/', "onProxyRes", type, req.url);
-        // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
         delete proxyRes.headers["content-length"];
-
-        // proxyRes.headers["referrer-policy"] = "origin";
-
-        // return;
 
         const chunkArray = [];
 
@@ -157,8 +80,6 @@ app.use('/', createProxyMiddleware({
         const _end = res.end;
         res.end = async function (chunk) {
 
-
-
             chunk && chunkArray.push(chunk);
 
             console.log(req.url, chunkArray.length, contentType);
@@ -167,8 +88,6 @@ app.use('/', createProxyMiddleware({
                 _end.call(res);
                 return;
             }
-
-            // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", req.url + " => " + req.originalUrl);
 
             const buf = Buffer.concat(chunkArray);
 
@@ -212,4 +131,4 @@ app.use('/', createProxyMiddleware({
     }
 }));
 
-app.listen(12345);
+app.listen(3000);
