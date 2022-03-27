@@ -116,12 +116,12 @@ app.use('/', createProxyMiddleware({
     //         console.log(data);
     //     });
     // },
-    onProxyReq: (proxyReq, req, res, options) => {
-        // req.headers["cache-control"] = "no-cache";
-        // req.headers["cache-control"] = "no-store";
-        req.headers["content-encoding"] = "gzip";
-        req.gzip = true;
-    },
+    // onProxyReq: (proxyReq, req, res, options) => {
+    //     // req.headers["cache-control"] = "no-cache";
+    //     // req.headers["cache-control"] = "no-store";
+    //     req.headers["content-encoding"] = "gzip";
+    //     req.gzip = true;
+    // },
     onProxyRes: (proxyRes, req, res) => {
 
         console.log("onProxyRes", req.path);
