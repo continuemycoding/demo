@@ -169,7 +169,7 @@ app.use('/', createProxyMiddleware({
 
                 if (encoding == "gzip")
                     decompressed = (await ungzip(buf)).toString();
-                else if(encoding == "br")
+                else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
 
                 // console.log("decompressed", decompressed);
@@ -182,11 +182,11 @@ app.use('/', createProxyMiddleware({
                 // http://hongkong:12345/https-www-youtube-com/
 
 
-                // const proxyUrl = /\/proxy\/(http|https)-[\w-]+/gm.exec(req.originalUrl);
-                // console.log("originalUrl", req.originalUrl, proxyUrl);
+
+                //console.log("originalUrl", req.originalUrl, proxyUrl);
 
                 // if(proxyUrl == null)
-                  const  proxyUrl = "/proxy/https-nextjs-org";
+                //   const  proxyUrl = "/proxy/https-nextjs-org";
 
                 decompressed = decompressed.replace(/(http|https):\/\/(([\w\.]+)(:\d+)?)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
@@ -194,20 +194,24 @@ app.use('/', createProxyMiddleware({
                     return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
                 });
 
-                decompressed = decompressed.replace(/(src|href)="(\/[\w\/\-\.]+)"/gm, (substring, ...args) => {
-                    console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl}${args[1]}"`);
+                const proxyUrl = /\/proxy\/(http|https)-[\w-]+/gm.exec(req.originalUrl);
+                if (proxyUrl) {
+                    decompressed = decompressed.replace(/(src|href)="(\/[\w\/\-\.]+)"/gm, (substring, ...args) => {
+                        // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl}${args[1]}"`);
 
-                    return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl}${args[1]}"`;
-                });
+                        return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl}${args[1]}"`;
+                    });
+                }
+
 
                 // 
 
                 // decompressed = decompressed.replace(/www.baidu.com/gm, `${req.protocol}://${req.headers.host}`);
 
                 let compressed = Buffer.from(decompressed);
-                if(encoding == "gzip")
+                if (encoding == "gzip")
                     compressed = await gzip(decompressed);
-                else if(encoding == "br")
+                else if (encoding == "br")
                     compressed = brotli.compress(new TextEncoder().encode(decompressed));
 
                 // console.log("compressed", compressed);
