@@ -8,7 +8,7 @@ process.on('uncaughtException', function (e) {
 const app = express();
 
 app.use('/', createProxyMiddleware({
-    // logLevel: "debug",
+    logLevel: "debug",
     router: (req) => {
         return req.protocol + "://" + req.headers.host;
     },
