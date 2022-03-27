@@ -138,6 +138,7 @@ app.use('/', createProxyMiddleware({
         delete proxyRes.headers["content-security-policy"];
         // proxyRes.headers["referrer-policy"] = "origin";
 
+        return;
 
         //if (type.indexOf("text/html") == -1)
         //    return;
