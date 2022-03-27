@@ -136,9 +136,10 @@ app.use('/', createProxyMiddleware({
         // console.log('https://github.com/', "onProxyRes", type, req.url);
         // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
+        delete proxyRes.headers["content-length"];
         // proxyRes.headers["referrer-policy"] = "origin";
 
-        return;
+        // return;
 
         //if (type.indexOf("text/html") == -1)
         //    return;
@@ -221,7 +222,7 @@ app.use('/', createProxyMiddleware({
 
                 // console.log("compressed", compressed);
 
-                proxyRes.headers["content-length"] = compressed.length;
+                // proxyRes.headers["content-length"] = compressed.length;
 
                 _end.call(res, compressed);
             }
