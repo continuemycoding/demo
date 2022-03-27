@@ -99,6 +99,8 @@ app.use('/', createProxyMiddleware({
                 else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
 
+                // decompressed = decompressed.replace(/\\u002F/gm, "/");
+
                 decompressed = decompressed.replace(/((http|https):)?\/\/([^/]+)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
