@@ -3,28 +3,15 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-function router(req) {
-    if (typeof req == "string")
-        return req;
-
-    return req.protocol + "://" + req.headers.host;
-}
-
 app.use('/', createProxyMiddleware({
     logLevel: "debug",
-    router,
-    changeOrigin: true,
-    // pathRewrite: async function (path, req) {
-    //     return path;
-    // },
-    // cookieDomainRewrite: "",
-    onProxyReq: (proxyReq, req, res, options) => {
-        proxyReq.setHeader('referer', router(req.originalUrl));
+    router: (req) => {
+        if (typeof req == "string")
+            return req;
+
+        return req.protocol + "://" + req.headers.host;
     },
-    // onProxyRes: (proxyRes, req, res) => {
-    //     delete proxyRes.headers["content-security-policy"];
-    //     delete proxyRes.headers["content-length"];
-    // }
+    changeOrigin: true,
 }));
 
 app.listen(12345);
