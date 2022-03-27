@@ -63,10 +63,12 @@ app.use('/', createProxyMiddleware({
 
         // /proxy/https-www-bilibili-com/gentleman/polyfill.js
 
-        const match = /\/proxy\/(http|https)-([\w-=]+)/gm.exec(req.path);
+        const searchValue = /\/proxy\/(http|https)-([\w-=]+)/gm;
+
+        const match = searchValue.exec(req.path);
         if (match) {
 
-            const xx = match[0].replace(/\/proxy\/(http|https)-([\w-]+)/gm, (substring, ...args) => {
+            const xx = match[0].replace(searchValue, (substring, ...args) => {
                 // if(args[1] == "www.baidu.com")
                 //     return `${req.protocol}://${req.headers.host}`;
 
