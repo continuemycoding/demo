@@ -126,6 +126,9 @@ app.use('/', createProxyMiddleware({
 
         console.log("onProxyRes", req.path);
 
+        if (proxyRes.headers["content-type"].indexOf("text/html") == -1)
+            return;
+
         // const type = proxyRes.headers["content-type"];
         // if (!type || type.includes("image/"))
         //     return;
@@ -136,8 +139,7 @@ app.use('/', createProxyMiddleware({
         // console.log('https://github.com/', "onProxyRes", type, req.url);
         // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
-        if (proxyRes.headers["content-type"].indexOf("text/html") != -1)
-            delete proxyRes.headers["content-length"];
+        delete proxyRes.headers["content-length"];
 
         // proxyRes.headers["referrer-policy"] = "origin";
 
