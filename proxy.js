@@ -136,7 +136,7 @@ app.use('/', createProxyMiddleware({
         // console.log('https://github.com/', "onProxyRes", type, req.url);
         // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
-
+        delete proxyRes.headers["content-length"];
         // proxyRes.headers["referrer-policy"] = "origin";
 
         // return;
@@ -178,8 +178,6 @@ app.use('/', createProxyMiddleware({
                 else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
 
-                const decompressedBeforeReplace = String(decompressed);
-
                 decompressed = decompressed.replace(/(http|https):\/\/(([\w.-]+)(:\d+)?)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
@@ -194,9 +192,6 @@ app.use('/', createProxyMiddleware({
                         return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`;
                     });
                 }
-
-                if (decompressedBeforeReplace != decompressed)
-                    delete proxyRes.headers["content-length"];
 
                 let compressed = Buffer.from(decompressed);
                 if (encoding == "gzip")
