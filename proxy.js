@@ -136,6 +136,7 @@ app.use('/', createProxyMiddleware({
         // console.log('https://github.com/', "onProxyRes", type, req.url);
         // console.log(proxyRes.headers["content-security-policy"]);
         delete proxyRes.headers["content-security-policy"];
+        delete proxyRes.headers["referrer-policy"];
 
 
         //if (type.indexOf("text/html") == -1)
