@@ -180,15 +180,15 @@ app.use('/', createProxyMiddleware({
                 else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
 
-                decompressed = decompressed.replace(/(http|https):\/\/(([\w.-]+)(:\d+)?)/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/((http|https):)?\/\/([^/]+)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
-                    return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${Buffer.from(args[1]).toString('hex')}`;
+                    return `${req.protocol}://${req.headers.host}/proxy/${args[1] || "http"}-${Buffer.from(args[2]).toString('hex')}`;
                 });
 
                 const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
                 if (proxyUrl) {
-                    decompressed = decompressed.replace(/(src|href)="(\/[^"]+)"/gm, (substring, ...args) => {
+                    decompressed = decompressed.replace(/(src|href|srcset)="(\/[^"]+)"/gm, (substring, ...args) => {
                         // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
 
                         return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`;
