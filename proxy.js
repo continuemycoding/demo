@@ -126,11 +126,12 @@ app.use('/', createProxyMiddleware({
 
         console.log("onProxyRes", req.path);
 
-        if (proxyRes.headers["content-type"]?.indexOf("text/html") == -1)
+        const contentType = proxyRes.headers["content-type"];
+
+        if (contentType?.indexOf("text/html") == -1)
             return;
 
-        // const type = proxyRes.headers["content-type"];
-        // if (!type || type.includes("image/"))
+        // if (contentType?.includes("image/"))
         //     return;
 
         const encoding = proxyRes.headers["content-encoding"];
@@ -160,7 +161,7 @@ app.use('/', createProxyMiddleware({
 
             chunk && chunkArray.push(chunk);
 
-            console.log(req.url, chunkArray.length, proxyRes.headers["content-type"]);
+            console.log(req.url, chunkArray.length, contentType);
 
             if (chunkArray.length == 0) {
                 _end.call(res);
