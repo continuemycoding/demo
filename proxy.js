@@ -189,7 +189,7 @@ app.use('/', createProxyMiddleware({
                 // if(proxyUrl == null)
                 //   const  proxyUrl = "/proxy/https-nextjs-org";
 
-                decompressed = decompressed.replace(/(http|https):\/\/(([\w\.]+)(:\d+)?)/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/(http|https):\/\/(([\w.-]+)(:\d+)?)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
                     return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
