@@ -4,6 +4,9 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 
 function router(req) {
+    if (typeof req == "string")
+        return req;
+
     return req.protocol + "://" + req.headers.host;
 }
 
