@@ -63,7 +63,7 @@ app.use('/', createProxyMiddleware({
 
         // /proxy/https-www-bilibili-com/gentleman/polyfill.js
 
-        const searchValue = /\/proxy\/(http|https)-([\w-=]+)/gm;
+        const searchValue = /\/proxy-([\w-=]+)/gm;
 
         const match = searchValue.exec(req.path);
         if (match) {
@@ -74,12 +74,13 @@ app.use('/', createProxyMiddleware({
 
                 // return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
 
-                const protocol = args[0];
-                const domain = Buffer.from(args[1], 'hex').toString();
-                return protocol + "://" + domain;
+                return Buffer.from(args[0], 'hex').toString();
             });
 
             console.log("####################", "router", xx);
+
+            if (!xx.startsWith("http"))
+                return "http" + xx;
 
             return xx;
 
@@ -99,13 +100,13 @@ app.use('/', createProxyMiddleware({
     changeOrigin: true,
     // pathRewrite: { '^/github-com/': '/' },
     pathRewrite: async function (path, req) {
-        const match = /\/proxy\/(http|https)-([\w-=]+)(.*)/gm.exec(req.path);
+        const match = /\/proxy-([\w-=]+)(.*)/gm.exec(req.path);
         if (match) {
             //const protocol = match[1];
             //const domain = match[2].replace(/-/gm, ".");
             //return protocol + "://" + domain;
 
-            return match[3];
+            return match[2];
         }
 
         return path;
@@ -180,13 +181,13 @@ app.use('/', createProxyMiddleware({
                 else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
 
-                decompressed = decompressed.replace(/((http|https):)?\/\/([^/]+)/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/((http|https):)?\/\/[^/]+/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
-                    return `${req.protocol}://${req.headers.host}/proxy/${args[1] || "http"}-${Buffer.from(args[2]).toString('hex')}`;
+                    return `${req.protocol}://${req.headers.host}/proxy-${Buffer.from(substring).toString('hex')}`;
                 });
 
-                const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
+                const proxyUrl = /\/proxy-[\w-=]+/gm.exec(req.originalUrl);
                 if (proxyUrl) {
                     decompressed = decompressed.replace(/(src|href|srcset)="(\/[^"]+)"/gm, (substring, ...args) => {
                         // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
@@ -212,4 +213,4 @@ app.use('/', createProxyMiddleware({
     }
 }));
 
-app.listen(12345);
+app.listen(3000);
