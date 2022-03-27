@@ -186,13 +186,12 @@ app.use('/', createProxyMiddleware({
                 });
 
                 const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
-                if (proxyUrl) {
-                    decompressed = decompressed.replace(/(src|href)="(\/[^"]+)"/gm, (substring, ...args) => {
-                        // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
 
-                        return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`;
-                    });
-                }
+                decompressed = decompressed.replace(/(src|href)="(\/[^"]+)"/gm, (substring, ...args) => {
+                    // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
+
+                    return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl ? proxyUrl[0] : ""}${args[1]}"`;
+                });
 
                 let compressed = Buffer.from(decompressed);
                 if (encoding == "gzip")
