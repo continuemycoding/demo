@@ -32,7 +32,7 @@ function router(req) {
 }
 
 app.use('/', createProxyMiddleware({
-    // logLevel: "debug",
+    logLevel: "debug",
     router,
     changeOrigin: true,
     pathRewrite: async function (path, req) {
