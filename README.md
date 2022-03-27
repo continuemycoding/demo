@@ -1,15 +1,11 @@
 ```bash
 sudo apt install -y libssl1.0-dev nodejs-dev node-gyp npm
 
-curl -O https://raw.githubusercontent.com/continuemycoding/demo/main/socks5-proxy.js
-curl -O https://raw.githubusercontent.com/continuemycoding/demo/main/socks5-proxy.sh
-curl -O https://raw.githubusercontent.com/continuemycoding/demo/main/http-proxy.js
-curl -O https://raw.githubusercontent.com/continuemycoding/demo/main/http-proxy.sh
+curl -O https://raw.githubusercontent.com/continuemycoding/demo/main/proxy.js
 npm install
 
 sudo -s #切换root权限
-echo "/home/lighthouse/socks5-proxy.sh" >> /etc/rc.local #添加开机自启
-echo "/home/lighthouse/http-proxy.sh" >> /etc/rc.local
+echo "node /home/lighthouse/proxy.js" >> /etc/rc.local #添加开机自启
 reboot
 ```
 
