@@ -13,23 +13,14 @@ function router(req) {
 
     const match = searchValue.exec(req.path);
     if (match) {
-
-        const xx = match[0].replace(searchValue, (substring, ...args) => {
-            // if(args[1] == "www.baidu.com")
-            //     return `${req.protocol}://${req.headers.host}`;
-
-            // return `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`;
-
+        return match[0].replace(searchValue, (substring, ...args) => {
             const protocol = args[0];
-            const domain = Buffer.from(args[1], 'hex').toString();
-            return protocol + "://" + domain;
+            const host = Buffer.from(args[1], 'hex').toString();
+            return protocol + "://" + host;
         });
-
-        console.log("####################", "router", xx);
-
-        return xx;
     }
 
+    // return "https://www.douyin.com/";
     // return "https://web.telegram.org/z/";
     return "https://www.xvideos.com/";
     // return "https://my-next-app-git-test-continuemycoding.vercel.app/";
@@ -45,7 +36,7 @@ app.use('/', createProxyMiddleware({
     router,
     changeOrigin: true,
     pathRewrite: async function (path, req) {
-        const match = /\/proxy\/(http|https)-([\w-=]+)(.*)/gm.exec(req.path);
+        const match = /\/proxy\/(http|https)-([\w-=]+)(.*)/gm.exec(path);
         return match ? match[3] : path;
     },
     onProxyReq: (proxyReq, req, res, options) => {
