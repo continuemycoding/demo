@@ -111,7 +111,7 @@ app.use('/', createProxyMiddleware({
                     return args[0] + args[1];
                 });
 
-                decompressed = decompressed.replace(/(http|https):\/\/([^/]+)/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/(http|https):\/\/([^/ ]+)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
                     return `${req.protocol}://${req.headers.host}/proxy/${args[0] || "http"}-${Buffer.from(args[1]).toString('hex')}`;
