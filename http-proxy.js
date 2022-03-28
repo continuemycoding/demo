@@ -107,7 +107,7 @@ app.use('/', createProxyMiddleware({
 
                 const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
 
-                decompressed = decompressed.replace(/(src|href|srcset)="(\/[^"]+)"/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/(src|href|srcset)="\/?(\/[^"]+)"/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl ? proxyUrl[0] : ""}${args[1]}"`);
 
                     return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl ? proxyUrl[0] : ""}${args[1]}"`;
