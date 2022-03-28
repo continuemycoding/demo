@@ -54,7 +54,10 @@ app.use('/', createProxyMiddleware({
         //     return;
         // }
 
-        if (contentType == "text/css")
+        // if (contentType == "text/css")
+        //     return;
+
+        if (contentType == "application/javascript")
             return;
 
         if (contentType?.startsWith("image/") || contentType?.startsWith("font/"))
