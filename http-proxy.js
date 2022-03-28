@@ -54,8 +54,8 @@ app.use('/', createProxyMiddleware({
         //     return;
         // }
 
-        // if (contentType?.includes("image/"))
-        //     return;
+        if (contentType?.startsWith("image/"))
+            return;
 
         const encoding = proxyRes.headers["content-encoding"];
         console.log({ encoding });
