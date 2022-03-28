@@ -2,6 +2,7 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { gzip, ungzip } = require('node-gzip');
 const brotli = require('brotli');
+const beautify = require('js-beautify').js;
 
 // http://service.picasso.adesk.com/v1/vertical/category/4e4d610cdf714d2966000000/vertical
 // http://maqib.cn/blog/node-reptile
@@ -101,6 +102,9 @@ app.use('/', createProxyMiddleware({
                     decompressed = (await ungzip(buf)).toString();
                 else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
+
+                if (contentType == "application/javascript")
+                    decompressed = beautify(decompressed, { indent_size: 2, space_in_empty_paren: true });
 
                 // decompressed = decompressed.replace(/\\u002F/gm, "/");
 
