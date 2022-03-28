@@ -109,9 +109,9 @@ app.use('/', createProxyMiddleware({
 
                 // decompressed = decompressed.replace(/\\u002F/gm, "/");
 
-                // decompressed = decompressed.replace(/(href="\/video\d{8})\/\d{8}\/\d(\/[^"]+")/gm, (substring, ...args) => {
-                //     return args[0] + args[1];
-                // });
+                decompressed = decompressed.replace(/(href="\/video\d{8})\/\d{8}\/\d(\/[^"]+")/gm, (substring, ...args) => {
+                    return args[0] + args[1];
+                });
 
                 decompressed = decompressed.replace(/(http|https):\/\/([^/ ]+)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
