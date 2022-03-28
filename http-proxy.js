@@ -40,7 +40,7 @@ app.use('/', createProxyMiddleware({
         const match = /\/proxy\/(http|https)-([\w-=]+)(.*)/gm.exec(path);
         return match ? match[3] : path;
     },
-    // cookieDomainRewrite: "",
+    cookieDomainRewrite: ".xvideos.com",
     onProxyReq: (proxyReq, req, res, options) => {
         proxyReq.setHeader('referer', router({ path: req.originalUrl }));
     },
