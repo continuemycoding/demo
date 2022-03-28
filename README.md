@@ -10,3 +10,11 @@ reboot
 ```
 
 ### 使用腾讯云轻量应用服务器搭建，需要配置防火墙开放指定端口
+---
+~~~bash
+git config -l
+
+git config --global http.proxy "socks5://ip:port"
+
+git config --global --unset http.proxy
+~~~
