@@ -63,7 +63,10 @@ app.use('/', createProxyMiddleware({
         if (contentType?.startsWith("image/") || contentType?.startsWith("font/"))
             return;
 
-        if(req.path.includes("jquery.min.js"))
+        // if (req.path.includes("jquery.min.js"))
+        //     return;
+
+        if (req.path.includes("default.js"))
             return;
 
         const encoding = proxyRes.headers["content-encoding"];
