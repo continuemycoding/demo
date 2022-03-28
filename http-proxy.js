@@ -50,6 +50,9 @@ app.use('/', createProxyMiddleware({
 
         const contentType = proxyRes.headers["content-type"];
 
+        if(req.path.startsWith("data:image/"))
+            return;
+
         // if (contentType && contentType.indexOf("text/html") == -1) {
         //     return;
         // }
