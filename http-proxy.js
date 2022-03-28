@@ -103,10 +103,9 @@ app.use('/', createProxyMiddleware({
                 else if (encoding == "br")
                     decompressed = new TextDecoder().decode(brotli.decompress(buf));
 
-                if (contentType == "application/javascript") {
-                    decompressed = beautify(decompressed, { indent_size: 2, space_in_empty_paren: true });
-                    console.log(decompressed);
-                }
+                // if (contentType == "application/javascript") {
+                //     decompressed = beautify(decompressed, { indent_size: 2, space_in_empty_paren: true });
+                // }
 
                 // decompressed = decompressed.replace(/\\u002F/gm, "/");
 
