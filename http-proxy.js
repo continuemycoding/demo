@@ -50,9 +50,6 @@ app.use('/', createProxyMiddleware({
 
         const contentType = proxyRes.headers["content-type"];
 
-        if(req.path.startsWith("data:image/"))
-            return;
-
         // if (contentType && contentType.indexOf("text/html") == -1) {
         //     return;
         // }
@@ -102,20 +99,19 @@ app.use('/', createProxyMiddleware({
                 //     return args[0] + args[1];
                 // });
 
-                decompressed = decompressed.replace(/((http|https):)?\/\/([^/]+)/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/(http|https):\/\/([^/]+)/gm, (substring, ...args) => {
                     // console.log("replace", substring, "=>", `${req.protocol}://${req.headers.host}/proxy/${args[0]}-${args[1].replace(/\./gm, '-')}`);
 
-                    return `${req.protocol}://${req.headers.host}/proxy/${args[1] || "http"}-${Buffer.from(args[2]).toString('hex')}`;
+                    return `${req.protocol}://${req.headers.host}/proxy/${args[0] || "http"}-${Buffer.from(args[1]).toString('hex')}`;
                 });
 
                 const proxyUrl = /\/proxy\/(http|https)-[\w-=]+/gm.exec(req.originalUrl);
-                if (proxyUrl) {
-                    decompressed = decompressed.replace(/(src|href|srcset)="(\/[^"]+)"/gm, (substring, ...args) => {
-                        // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`);
 
-                        return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl[0]}${args[1]}"`;
-                    });
-                }
+                decompressed = decompressed.replace(/(src|href|srcset)="(\/[^"]+)"/gm, (substring, ...args) => {
+                    // console.log("replace", substring, "=>", `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl ? proxyUrl[0] : ""}${args[1]}"`);
+
+                    return `${args[0]}="${req.protocol}://${req.headers.host}${proxyUrl ? proxyUrl[0] : ""}${args[1]}"`;
+                });
 
                 let compressed = Buffer.from(decompressed);
                 if (encoding == "gzip")
