@@ -66,9 +66,6 @@ app.use('/', createProxyMiddleware({
         // if (req.path.includes("jquery.min.js"))
         //     return;
 
-        if (req.path.includes("default.header.static.js"))
-            return;
-
         const encoding = proxyRes.headers["content-encoding"];
         console.log({ encoding });
 
