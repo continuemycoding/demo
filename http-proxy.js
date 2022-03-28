@@ -95,7 +95,7 @@ app.use('/', createProxyMiddleware({
 
                 // decompressed = decompressed.replace(/\\u002F/gm, "/");
 
-                decompressed = decompressed.replace(/(href="\/video\d+)\/\d+\/\d(\/[^"]+")/gm, (substring, ...args) => {
+                decompressed = decompressed.replace(/(href="\/video\d{8})\/\d{8}\/\d(\/[^"]+")/gm, (substring, ...args) => {
                     return args[0] + args[1];
                 });
 
