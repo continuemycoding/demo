@@ -205,8 +205,10 @@ bot.on('message', async (ctx) => {
 
             const vertical = (await axios.get(url)).data.res.vertical;
 
+            const total = Number(match[1]);
+
             for (let i = 0; i < vertical.length; i++) {
-                await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `${i + 1}/${Number(match[1]) + i + 1}` });
+                await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `${i + 1}/${total + i + 1 > 5000 ? total + i + 1 : 5000}` });
             }
             return;
         }
