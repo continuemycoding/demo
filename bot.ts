@@ -195,7 +195,7 @@ bot.on('message', async (ctx) => {
     if (text) {
         if (text.includes("美女")) {
 
-            const match = /美女 (\d+),\s(\d+)/gm.exec(text);
+            const match = /美女 (\d+),\s?(\d+)/gm.exec(text);
 
             if (!match)
                 return;
