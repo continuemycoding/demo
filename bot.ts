@@ -206,7 +206,7 @@ bot.on('message', async (ctx) => {
             const vertical = (await axios.get(url)).data.res.vertical;
 
             for (let i = 0; i < vertical.length; i++) {
-                await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `${i + 1}/${match[1] + i + 1}` });
+                await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `${i + 1}/${Number(match[1]) + i + 1}` });
             }
             return;
         }
