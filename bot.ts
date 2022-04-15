@@ -201,7 +201,7 @@ bot.on('message', async (ctx) => {
              const vertical = (await axios.get(`https://service.picasso.adesk.com/v1/vertical/category/4e4d610cdf714d2966000000/vertical?skip=${20 * verticalIndex}`)).data.res.vertical;
 
              for (let i = 0; i < vertical.length; i++) {
-                 await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `第${vertical * 20 + i + 1}张图` });
+                 await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `第${verticalIndex * 20 + i + 1}张图` });
              }
 
              verticalIndex++;
