@@ -186,6 +186,8 @@ bot.use((ctx, next) => {
 //     doSearch(nextPage.searchTerms, nextPage.startIndex, ctx);
 // });
 
+let verticalIndex = 0;
+
 bot.on('message', async (ctx) => {
 
     console.log(ctx.updateType);
@@ -196,12 +198,13 @@ bot.on('message', async (ctx) => {
      {
          if (text == "美女") {
 
-             //?skip = 10
-             const vertical = (await axios.get(`https://service.picasso.adesk.com/v1/vertical/category/4e4d610cdf714d2966000000/vertical`)).data.res.vertical;
+             const vertical = (await axios.get(`https://service.picasso.adesk.com/v1/vertical/category/4e4d610cdf714d2966000000/vertical?skip=${20 * verticalIndex}`)).data.res.vertical;
 
              for (let i = 0; i < vertical.length; i++) {
-                 await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `第${i}张图` });
+                 await ctx.replyWithPhoto({ url: vertical[i].img }, { caption: `第${i + 1}张图` });
              }
+
+             verticalIndex++;
              return;
          }
 
