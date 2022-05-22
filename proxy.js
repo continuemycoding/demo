@@ -30,7 +30,8 @@ const server = socks.createServer(async (info, accept, deny) => {
 
     const data = await request({ url: `http://ip-api.com/json/${info.srcAddr}?lang=zh-CN` });
 
-    data.city == "福州市" && accept();
+    if (data.city == "福州" || data.city == "福州市")
+        accept();
 });
 
 server.listen(54321, '0.0.0.0', () => {
