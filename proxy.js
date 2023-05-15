@@ -28,9 +28,9 @@ app.listen(12345);
 const server = socks.createServer(async (info, accept, deny) => {
     // console.log(info.srcAddr, info.srcPort, info.dstAddr, info.dstPort);
 
-    const data = await request({ url: `http://ip-api.com/json/${info.srcAddr}?lang=zh-CN` });
+    //const data = await request({ url: `http://ip-api.com/json/${info.srcAddr}?lang=zh-CN` });
 
-    if (data.city == "福州" || data.city == "福州市")
+    //if (data.city == "福州" || data.city == "福州市")
         accept();
 });
 
